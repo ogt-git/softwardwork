@@ -1,4 +1,3 @@
-
 name: CI - Build
 
 on:
@@ -9,8 +8,25 @@ jobs:
   springboot-twitter-ci:
     runs-on: ubuntu-24.04
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpass
+          MYSQL_DATABASE: twitterdb
+          MYSQL_USER: dev
+          MYSQL_PASSWORD: dev123
+        ports:
+          - 3307:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -prootpass"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -19,8 +35,10 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Grant execute permission for Gradle
-        run: chmod +x ./gradlew
-
       - name: Build with Gradle
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3307/twitterdb
+          SPRING_DATASOURCE_USERNAME: dev
+          SPRING_DATASOURCE_PASSWORD: dev123
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
         run: ./gradlew build
