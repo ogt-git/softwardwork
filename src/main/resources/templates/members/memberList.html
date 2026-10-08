@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>memberLists</title>
+</head>
+<body>
+
+<div class="container">
+    <div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>이름</th>
+            <th>비밀번호</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="member,stat : ${members}">
+            <td th:text="${member.getId()}"></td>
+            <td th:text="${member.getName()}"></td>
+            <td th:text="${member.getPassword()}"></td>
+
+        </tr>
+        </tbody>
+    </table>
+    </div>
+</div>
+
+</body>
+</html>
